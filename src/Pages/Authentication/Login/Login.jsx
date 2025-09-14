@@ -2,14 +2,18 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import SocialLogin from '../SocialLogin/SocialLogin';
+import Logo from '../../../Components/Logo';
 
 const Login = () => {
     const {register, handleSubmit} =useForm();
+
+    
     const onSubmit =data =>{
         console.log(data);
     }
     return (
-        <div>
+        <div className='m-20'>
+            
            <form onSubmit={handleSubmit(onSubmit)}>
                <fieldset className="fieldset">
           <label className="label">Email</label>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router";
 import { FaBell } from "react-icons/fa";
+import Logo from "./Logo";
 
 const Navbar = () => {
   // Dummy user object (replace with your Firebase/AuthContext)
@@ -23,12 +24,8 @@ const Navbar = () => {
         <div className="flex justify-between h-16 items-center">
           {/* Logo & Brand Name */}
           <Link to="/" className="flex items-center gap-2">
-            <img
-              src="/logo.png"
-              alt="demander logo"
-              className="h-8 w-8"
-            />
-            <span className="font-bold text-xl text-blue-600">Demander</span>
+         
+            <Logo></Logo>
           </Link>
 
           {/* Nav Links */}

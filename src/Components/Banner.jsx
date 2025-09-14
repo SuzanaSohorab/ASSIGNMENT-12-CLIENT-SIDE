@@ -1,9 +1,11 @@
 import { FaSearch } from "react-icons/fa";
 
+
 const Banner = () => {
   return (
     <section className="bg-[#2c3e50] text-white py-32 flex flex-col items-center justify-center text-center">
       {/* Heading */}
+      
       <h1 className="text-4xl md:text-5xl font-bold mb-2">
         WELCOME TO DEMANDER FORUM
       </h1>

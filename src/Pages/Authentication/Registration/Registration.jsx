@@ -4,19 +4,35 @@ import UseAuth from '../../../Hooks/UseAuth';
 import { Link } from 'react-router';
 import SocialLogin from '../SocialLogin/SocialLogin';
 
+
 const Registration = () => {
     const {register, handleSubmit} =useForm();
     const {createUser} = UseAuth();
 
-    const onSubmit =data =>{
+    const onSubmit = async (data) =>{
         console.log(data);
         createUser(data.email,data.password)
         .then(result =>{
             console.log(result.user);
         })
+
+        try {
+    const res = await fetch("http://localhost:5000/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+    console.log("User added:", result);
+  } catch (error) {
+    console.error("Error adding user:", error);
+  }
+
     }
     return (
-        <div>
+        <div className='m-20'> 
+           
 
            <form onSubmit={handleSubmit(onSubmit)}>
             <h1>Create An Account</h1>

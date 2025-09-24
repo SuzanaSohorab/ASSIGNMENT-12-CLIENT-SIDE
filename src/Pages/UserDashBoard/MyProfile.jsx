@@ -27,7 +27,7 @@ export default function MyProfile() {
       {/* Profile Info */}
       <div className="flex items-center space-x-4 mb-6">
         <img
-          src={profile.photoURL}
+          src={profile.photo}
           alt={profile.name}
           className="w-20 h-20 rounded-full border"
         />

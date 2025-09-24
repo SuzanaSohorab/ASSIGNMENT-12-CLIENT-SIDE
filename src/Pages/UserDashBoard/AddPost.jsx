@@ -1,7 +1,7 @@
 // src/pages/AddPost.jsx
 import { useForm } from "react-hook-form";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 
 import Swal from "sweetalert2";
 

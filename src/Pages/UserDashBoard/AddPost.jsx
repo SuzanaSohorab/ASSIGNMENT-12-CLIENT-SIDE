@@ -6,10 +6,11 @@ import { useContext, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 import { AuthContext } from "../../Contexts/AuthContext/AuthContext";
+import { useNavigate } from "react-router";
 
 export default function AddPost() {
   const { user } = useContext(AuthContext);
-  
+  const navigate = useNavigate();
 
   const [postCount, setPostCount] = useState(0);
   const {
@@ -71,7 +72,7 @@ export default function AddPost() {
         </h2>
         <p className="mb-6">Become a Member to add more posts!</p>
         <button
-          onClick={() => navigate("/membership")}
+          onClick={() => navigate("/dashboard/membership")}
           className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600"
         >
           Become a Member

@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
 import { FacebookShareButton, FacebookIcon } from "react-share";
 import { AuthContext } from "../../Contexts/AuthContext/AuthContext";
 
@@ -10,21 +9,24 @@ export default function PostDetails() {
   const { user } = useContext(AuthContext);
   const [post, setPost] = useState(null);
   const [commentText, setCommentText] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingText, setEditingText] = useState("");
   const [loading, setLoading] = useState(true);
 
   const shareUrl = `${window.location.origin}/post/${_id}`;
 
+  const fetchPost = async () => {
+    try {
+      const { data } = await axios.get(`http://localhost:5000/posts/${_id}`);
+      setPost(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const { data } = await axios.get(`http://localhost:5000/posts/${_id}`);
-        setPost(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPost();
   }, [_id]);
 
@@ -33,12 +35,45 @@ export default function PostDetails() {
     try {
       await axios.post(`http://localhost:5000/posts/${_id}/comments`, {
         authorEmail: user.email,
+        authorImage: user.photoURL || "/default.png",
         commentText,
       });
-      // Refresh post comments
-      const { data } = await axios.get(`http://localhost:5000/posts/${_id}`);
-      setPost(data);
       setCommentText("");
+      fetchPost();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!user) return alert("Please log in");
+
+    try {
+      await axios.delete(`http://localhost:5000/comments/${commentId}`, {
+        data: { userEmail: user.email },
+      });
+      fetchPost();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleEditStart = (commentId, text) => {
+    setEditingCommentId(commentId);
+    setEditingText(text);
+  };
+
+  const handleEditSave = async (commentId) => {
+    if (!user) return alert("Please log in");
+
+    try {
+      await axios.put(`http://localhost:5000/comments/${commentId}`, {
+        commentText: editingText,
+        userEmail: user.email,
+      });
+      setEditingCommentId(null);
+      setEditingText("");
+      fetchPost();
     } catch (err) {
       console.error(err);
     }
@@ -47,15 +82,13 @@ export default function PostDetails() {
   const handleUpvote = async () => {
     if (!user) return alert("Please log in to vote");
     await axios.post(`http://localhost:5000/posts/${_id}/upvote`);
-    const { data } = await axios.get(`http://localhost:5000/posts/${_id}`);
-    setPost(data);
+    fetchPost();
   };
 
   const handleDownvote = async () => {
     if (!user) return alert("Please log in to vote");
     await axios.post(`http://localhost:5000/posts/${_id}/downvote`);
-    const { data } = await axios.get(`http://localhost:5000/posts/${_id}`);
-    setPost(data);
+    fetchPost();
   };
 
   if (loading) return <p>Loading...</p>;
@@ -103,14 +136,69 @@ export default function PostDetails() {
       {/* Comment Section */}
       <div className="border p-4 rounded">
         <h3 className="font-bold mb-2">Comments ({post.commentCount})</h3>
-        {post.comments.map((c, idx) => (
-          <div key={idx} className="border-b py-2">
-            <p>
-              <span className="font-semibold">{c.authorEmail}:</span> {c.commentText}
-            </p>
-            <p className="text-xs text-gray-500">
-              {new Date(c.createdAt).toLocaleString()}
-            </p>
+
+        {post.comments.map((c) => (
+          <div key={c._id} className="border-b py-2 flex items-start gap-2">
+            <img
+              src={c.authorImage || "/default.png"}
+              alt="commenter"
+              className="w-8 h-8 rounded-full"
+            />
+            <div className="flex-1">
+              {editingCommentId === c._id ? (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                    className="flex-1 border p-1 rounded"
+                  />
+                  <button
+                    onClick={() => handleEditSave(c._id)}
+                    className="px-2 py-1 bg-blue-500 text-white rounded"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingCommentId(null)}
+                    className="px-2 py-1 bg-gray-400 text-white rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p>
+                    <span className="font-semibold">{c.authorEmail}:</span>{" "}
+                    {c.commentText}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(c.createdAt).toLocaleString()}
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            {user &&
+              (user.email === c.authorEmail || user.email === post.authorEmail) && (
+                <div className="flex gap-2">
+                  {user.email === c.authorEmail && editingCommentId !== c._id && (
+                    <button
+                      onClick={() => handleEditStart(c._id, c.commentText)}
+                      className="text-blue-500 text-sm"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDeleteComment(c._id)}
+                    className="text-red-500 text-sm"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
           </div>
         ))}
 

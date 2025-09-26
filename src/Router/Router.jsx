@@ -10,6 +10,7 @@ import Dashboard from "../Pages/UserDashBoard/Dashboard";
 import MyProfile from "../Pages/UserDashBoard/MyProfile";
 import AddPost from "../Pages/UserDashBoard/AddPost";
 import MyPosts from "../Pages/UserDashBoard/MyPosts";
+import PostDetails from "../Pages/PostDetails/PostDetails";
 
 export const router = createBrowserRouter([
   // Public routes
@@ -17,7 +18,11 @@ export const router = createBrowserRouter([
     path: "/",
     Component: RootLayouts,
     children: [
-      { index: true, Component: Home }
+      { index: true, Component: Home} ,
+       { path: "post/:_id", Component: PostDetails },
+
+        
+      
     ],
   },
   {

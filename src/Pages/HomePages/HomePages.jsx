@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -46,27 +47,29 @@ export default function HomePage() {
         </button>
       </div>
 
-      {posts.map((post) => (
-        <div key={post._id} className="border p-3 mb-3 rounded">
-          <div className="flex items-center gap-2">
-            <img
-              src={post.authorImage || "/default.png"}
-              alt="author"
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="font-semibold">{post.authorEmail}</span>
-          </div>
-          <h2 className="text-lg font-bold">{post.title}</h2>
-          <p className="text-sm text-gray-500">
-            {new Date(post.createdAt).toLocaleString()}
-          </p>
-          <div className="flex gap-4 text-sm mt-2">
-            <span>Tags: {post.tag}</span>
-            <span>Comments: {post.commentCount}</span>
-            <span>Votes: {post.upVote - post.downVote}</span>
-          </div>
-        </div>
-      ))}
+    {posts.map((post) => (
+    <Link to={`/post/${post._id}`} key={post._id} className="block">
+    <div className="border p-3 mb-3 rounded hover:shadow-lg cursor-pointer">
+      <div className="flex items-center gap-2">
+        <img
+          src={post.authorImage || "/default.png"}
+          alt="author"
+          className="w-8 h-8 rounded-full"
+        />
+        <span className="font-semibold">{post.authorEmail}</span>
+      </div>
+      <h2 className="text-lg font-bold">{post.title}</h2>
+      <p className="text-sm text-gray-500">
+        {new Date(post.createdAt).toLocaleString()}
+      </p>
+      <div className="flex gap-4 text-sm mt-2">
+        <span>Tags: {post.tag}</span>
+        <span>Comments: {post.commentCount}</span>
+        <span>Votes: {post.upVote - post.downVote}</span>
+      </div>
+    </div>
+  </Link>
+))}
 
       {/* Pagination */}
       <div className="flex justify-center gap-2 mt-4">

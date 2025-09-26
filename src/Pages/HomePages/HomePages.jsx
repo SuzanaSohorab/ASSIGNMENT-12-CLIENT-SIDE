@@ -1,154 +1,93 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-import { FaSortAmountDown } from "react-icons/fa";
-import Banner from "../../Components/Banner";
-
-const HomePage = () => {
+export default function HomePage() {
   const [posts, setPosts] = useState([]);
-  const [announcements, setAnnouncements] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortByPopularity, setSortByPopularity] = useState(false);
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState("newest");
+  const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 5;
-
-  // ✅ Fetch all data (posts, announcements, tags) from backend
   useEffect(() => {
-    fetch("http://localhost:5000/posts")
-      .then((res) => res.json())
-      .then((data) => setPosts(data));
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        const url =
+          sort === "popular"
+            ? `http://localhost:5000/posts/popular?page=${page}&limit=5`
+            : `http://localhost:5000/posts?page=${page}&limit=5`;
 
-    fetch("http://localhost:5000/announcements")
-      .then((res) => res.json())
-      .then((data) => setAnnouncements(data));
+        const { data } = await axios.get(url);
 
-    fetch("http://localhost:5000/tags")
-      .then((res) => res.json())
-      .then((data) => setTags(data));
-  }, []);
+        // Backend should return { posts, currentPage, totalPages }
+        setPosts(data.posts || []);
+        setTotalPages(data.totalPages || 1);
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // ✅ Handle search (backend filtering by tags)
-  const handleSearch = async () => {
-    if (!searchQuery) return;
-    const res = await fetch(`http://localhost:5000/posts/search?tag=${searchQuery}`);
-    const data = await res.json();
-    setPosts(data);
-    setCurrentPage(1); // reset to first page
-  };
+    fetchPosts();
+  }, [page, sort]);
 
-  // ✅ Sort posts by popularity (UpVote - DownVote)
-  const handleSortByPopularity = () => {
-    setSortByPopularity(true);
-    const sorted = [...posts].sort(
-      (a, b) => (b.upVote - b.downVote) - (a.upVote - a.downVote)
-    );
-    setPosts(sorted);
-  };
-
-  // ✅ Pagination logic
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const totalPages = Math.ceil(posts.length / postsPerPage);
+  if (loading) return <p>Loading...</p>;
 
   return (
-    <div>
-      {/* ✅ Banner with search */}
-      <Banner
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        handleSearch={handleSearch}
-      />
-
-      {/* ✅ Tags Section */}
-      <section className="max-w-6xl mx-auto px-4 my-10">
-        <h2 className="text-xl font-bold mb-4">Browse by Tags</h2>
-        <div className="flex gap-3 flex-wrap">
-          {tags.map((tag) => (
-            <button
-              key={tag._id}
-              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-blue-500 hover:text-white"
-              onClick={() => {
-                setSearchQuery(tag.name);
-                handleSearch();
-              }}
-            >
-              {tag.name}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* ✅ Announcements Section (only if exists) */}
-      {announcements.length > 0 && (
-        <section className="max-w-6xl mx-auto px-4 my-10 bg-yellow-100 p-4 rounded-lg">
-          <h2 className="text-xl font-bold mb-2">Announcements</h2>
-          {announcements.map((a) => (
-            <div key={a._id} className="border-b py-2">
-              <h3 className="font-semibold">{a.title}</h3>
-              <p className="text-gray-700">{a.description}</p>
-            </div>
-          ))}
-        </section>
-      )}
-
-      {/* ✅ Sort by Popularity Button */}
-      <div className="max-w-6xl mx-auto px-4 flex justify-end mb-6">
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">All Posts</h1>
         <button
-          onClick={handleSortByPopularity}
-          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+          onClick={() => setSort(sort === "newest" ? "popular" : "newest")}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
         >
-          <FaSortAmountDown /> Sort by Popularity
+          {sort === "newest" ? "Sort by Popularity" : "Sort by Newest"}
         </button>
       </div>
 
-      {/* ✅ Posts Section */}
-      <section className="max-w-6xl mx-auto px-4 grid gap-6">
-        {currentPosts.map((post) => (
-          <div
-            key={post._id}
-            className="bg-white shadow-md p-4 rounded-lg border"
-          >
-            <div className="flex items-center gap-3">
-              <img
-                src={post.authorImage || "/default-profile.png"}
-                alt="author"
-                className="w-10 h-10 rounded-full"
-              />
-              <p className="font-semibold">{post.authorName}</p>
-            </div>
-            <h3 className="text-xl font-bold mt-2">{post.title}</h3>
-            <p className="text-gray-600">{post.description.slice(0, 100)}...</p>
-            <div className="flex gap-3 mt-3 text-sm text-gray-600">
-              <span>Tags: {post.tag}</span>
-              <span>Comments: {post.commentCount || 0}</span>
-              <span>Votes: {post.upVote - post.downVote}</span>
-            </div>
+      {posts.map((post) => (
+        <div key={post._id} className="border p-3 mb-3 rounded">
+          <div className="flex items-center gap-2">
+            <img
+              src={post.authorImage || "/default.png"}
+              alt="author"
+              className="w-8 h-8 rounded-full"
+            />
+            <span className="font-semibold">{post.authorEmail}</span>
           </div>
-        ))}
-      </section>
+          <h2 className="text-lg font-bold">{post.title}</h2>
+          <p className="text-sm text-gray-500">
+            {new Date(post.createdAt).toLocaleString()}
+          </p>
+          <div className="flex gap-4 text-sm mt-2">
+            <span>Tags: {post.tag}</span>
+            <span>Comments: {post.commentCount}</span>
+            <span>Votes: {post.upVote - post.downVote}</span>
+          </div>
+        </div>
+      ))}
 
-      {/* ✅ Pagination */}
-      <div className="flex justify-center my-10 gap-2">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i + 1}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-4 py-2 rounded-md ${
-              currentPage === i + 1
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 hover:bg-gray-300"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
+      {/* Pagination */}
+      <div className="flex justify-center gap-2 mt-4">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span>
+          Page {page} of {totalPages}
+        </span>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
-};
-
-export default HomePage;
+}

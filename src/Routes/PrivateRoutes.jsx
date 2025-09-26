@@ -1,16 +1,21 @@
-import React from 'react';
-import UseAuth from '../Hooks/UseAuth';
+import React, { useContext } from 'react';
+import { AuthContext } from '../Contexts/AuthContext/AuthContext';
 import { Navigate } from 'react-router';
 
-const PrivateRoutes = ({children}) => {
-    const {user,loading}= UseAuth(); 
-    if (loading){
-        return <span className="loading loading-dots loading-xl"></span>
-    }
-    if(!user){
-        <Navigate to="/login"></Navigate>
-    }
-    return children;
+const PrivateRoutes = () => {
+     const { user, loading } = useContext(AuthContext); 
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-green-700 text-xl font-semibold">
+        Loading...
+      </div>
+    );
+  }
+  if(!user){
+    return <Navigate to="login"></Navigate>
+  }
 };
 
 export default PrivateRoutes;

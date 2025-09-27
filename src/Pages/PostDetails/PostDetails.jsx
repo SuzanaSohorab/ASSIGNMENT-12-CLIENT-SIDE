@@ -47,7 +47,6 @@ export default function PostDetails() {
 
   const handleDeleteComment = async (commentId) => {
     if (!user) return alert("Please log in");
-
     try {
       await axios.delete(`http://localhost:5000/comments/${commentId}`, {
         data: { userEmail: user.email },
@@ -65,7 +64,6 @@ export default function PostDetails() {
 
   const handleEditSave = async (commentId) => {
     if (!user) return alert("Please log in");
-
     try {
       await axios.put(`http://localhost:5000/comments/${commentId}`, {
         commentText: editingText,
@@ -91,58 +89,75 @@ export default function PostDetails() {
     fetchPost();
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (!post) return <p>Post not found</p>;
+  if (loading)
+    return <p className="text-center mt-20 text-gray-500">Loading...</p>;
+  if (!post) return <p className="text-center mt-20 text-red-500">Post not found</p>;
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      {/* Post Details */}
-      <div className="border p-4 rounded mb-6">
-        <div className="flex items-center gap-2 mb-2">
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      {/* Post Card */}
+      <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
+        {/* Author Info */}
+        <div className="flex items-center gap-3 mb-4">
           <img
             src={post.authorImage || "/default.png"}
             alt="author"
-            className="w-10 h-10 rounded-full"
+            className="w-12 h-12 rounded-full border-2 border-blue-400"
           />
-          <span className="font-semibold">{post.authorEmail}</span>
+          <div>
+            <p className="font-semibold text-gray-800">{post.authorEmail}</p>
+            <p className="text-gray-400 text-sm">
+              {new Date(post.createdAt).toLocaleString()}
+            </p>
+          </div>
         </div>
-        <h2 className="text-2xl font-bold">{post.title}</h2>
-        <p className="mt-2">{post.description}</p>
-        <div className="flex gap-4 text-sm mt-2">
-          <span>Tag: {post.tag}</span>
-          <span>Time: {new Date(post.createdAt).toLocaleString()}</span>
+
+        {/* Post Content */}
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">{post.title}</h1>
+        <p className="text-gray-700 mb-4">{post.description}</p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+            {post.tag}
+          </span>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-4 mt-4 items-center">
+        <div className="flex gap-3 items-center mt-3">
           <button
             onClick={handleUpvote}
-            className="px-3 py-1 bg-green-500 text-white rounded"
+            className="px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white rounded shadow hover:from-green-500 hover:to-green-600 transition-all"
           >
-            Upvote ({post.upVote})
+            👍 Upvote ({post.upVote})
           </button>
           <button
             onClick={handleDownvote}
-            className="px-3 py-1 bg-red-500 text-white rounded"
+            className="px-4 py-2 bg-gradient-to-r from-red-400 to-red-500 text-white rounded shadow hover:from-red-500 hover:to-red-600 transition-all"
           >
-            Downvote ({post.downVote})
+            👎 Downvote ({post.downVote})
           </button>
           <FacebookShareButton url={shareUrl}>
-            <FacebookIcon size={32} round />
+            <FacebookIcon size={36} round />
           </FacebookShareButton>
         </div>
       </div>
 
       {/* Comment Section */}
-      <div className="border p-4 rounded">
-        <h3 className="font-bold mb-2">Comments ({post.commentCount})</h3>
+      <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
+        <h2 className="text-xl font-bold mb-4">
+          Comments ({post.commentCount || 0})
+        </h2>
 
         {post.comments.map((c) => (
-          <div key={c._id} className="border-b py-2 flex items-start gap-2">
+          <div
+            key={c._id}
+            className="border-b last:border-b-0 py-3 flex gap-3 items-start"
+          >
             <img
               src={c.authorImage || "/default.png"}
               alt="commenter"
-              className="w-8 h-8 rounded-full"
+              className="w-10 h-10 rounded-full border-2 border-gray-300"
             />
             <div className="flex-1">
               {editingCommentId === c._id ? (
@@ -151,17 +166,17 @@ export default function PostDetails() {
                     type="text"
                     value={editingText}
                     onChange={(e) => setEditingText(e.target.value)}
-                    className="flex-1 border p-1 rounded"
+                    className="flex-1 border p-2 rounded"
                   />
                   <button
                     onClick={() => handleEditSave(c._id)}
-                    className="px-2 py-1 bg-blue-500 text-white rounded"
+                    className="px-3 py-1 bg-blue-500 text-white rounded"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingCommentId(null)}
-                    className="px-2 py-1 bg-gray-400 text-white rounded"
+                    className="px-3 py-1 bg-gray-400 text-white rounded"
                   >
                     Cancel
                   </button>
@@ -172,28 +187,25 @@ export default function PostDetails() {
                     <span className="font-semibold">{c.authorEmail}:</span>{" "}
                     {c.commentText}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-400">
                     {new Date(c.createdAt).toLocaleString()}
                   </p>
                 </>
               )}
             </div>
 
-            {/* Action Buttons */}
+            {/* Comment Actions */}
             {user &&
               (user.email === c.authorEmail || user.email === post.authorEmail) && (
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-1 text-right">
                   {user.email === c.authorEmail && editingCommentId !== c._id && (
-                    <button
-                      onClick={() => handleEditStart(c._id, c.commentText)}
-                      className="text-blue-500 text-sm"
-                    >
+                    <button className="text-blue-500 text-sm" onClick={() => handleEditStart(c._id, c.commentText)}>
                       Edit
                     </button>
                   )}
                   <button
-                    onClick={() => handleDeleteComment(c._id)}
                     className="text-red-500 text-sm"
+                    onClick={() => handleDeleteComment(c._id)}
                   >
                     Delete
                   </button>
@@ -210,17 +222,19 @@ export default function PostDetails() {
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a comment..."
-              className="flex-1 border p-2 rounded"
+              className="flex-1 border p-3 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <button
               onClick={handleComment}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 transition-all"
             >
               Comment
             </button>
           </div>
         ) : (
-          <p className="mt-4 text-gray-500">Login to comment or vote</p>
+          <p className="mt-4 text-gray-500 text-sm">
+            Login to comment or vote
+          </p>
         )}
       </div>
     </div>

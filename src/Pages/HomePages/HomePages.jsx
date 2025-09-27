@@ -19,8 +19,6 @@ export default function HomePage() {
             : `http://localhost:5000/posts?page=${page}&limit=5`;
 
         const { data } = await axios.get(url);
-
-        // Backend should return { posts, currentPage, totalPages }
         setPosts(data.posts || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
@@ -33,60 +31,78 @@ export default function HomePage() {
     fetchPosts();
   }, [page, sort]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="text-center mt-20 text-gray-500">Loading...</p>;
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">All Posts</h1>
+    <div className="p-6 max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <h1 className="text-2xl font-bold text-blue-700">All Posts</h1>
         <button
           onClick={() => setSort(sort === "newest" ? "popular" : "newest")}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded shadow hover:from-blue-600 hover:to-blue-700 transition-all"
         >
           {sort === "newest" ? "Sort by Popularity" : "Sort by Newest"}
         </button>
       </div>
 
-    {posts.map((post) => (
-    <Link to={`/post/${post._id}`} key={post._id} className="block">
-    <div className="border p-3 mb-3 rounded hover:shadow-lg cursor-pointer">
-      <div className="flex items-center gap-2">
-        <img
-          src={post.authorImage || "/default.png"}
-          alt="author"
-          className="w-8 h-8 rounded-full"
-        />
-        <span className="font-semibold">{post.authorEmail}</span>
+      {/* Posts */}
+      <div className="grid gap-6">
+        {posts.map((post) => (
+          <Link to={`/post/${post._id}`} key={post._id} className="block">
+            <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-5 border border-gray-100">
+              {/* Author */}
+              <div className="flex items-center gap-3 mb-3">
+                <img
+                  src={post.authorImage || "/default.png"}
+                  alt="author"
+                  className="w-10 h-10 rounded-full border-2 border-blue-400"
+                />
+                <div>
+                  <p className="font-semibold text-gray-800">{post.authorEmail}</p>
+                  <p className="text-gray-400 text-sm">
+                    {new Date(post.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              {/* Title & Description */}
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h2>
+              <p className="text-gray-600 line-clamp-3">{post.description}</p>
+
+              {/* Tags & Stats */}
+              <div className="flex flex-wrap gap-3 mt-4 items-center">
+                <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
+                  {post.tag}
+                </span>
+                <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                  Comments: {post.commentCount || 0}
+                </span>
+                <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
+                  Votes: {post.upVote - post.downVote}
+                </span>
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
-      <h2 className="text-lg font-bold">{post.title}</h2>
-      <p className="text-sm text-gray-500">
-        {new Date(post.createdAt).toLocaleString()}
-      </p>
-      <div className="flex gap-4 text-sm mt-2">
-        <span>Tags: {post.tag}</span>
-        <span>Comments: {post.commentCount}</span>
-        <span>Votes: {post.upVote - post.downVote}</span>
-      </div>
-    </div>
-  </Link>
-))}
 
       {/* Pagination */}
-      <div className="flex justify-center gap-2 mt-4">
+      <div className="flex justify-center gap-3 mt-8 items-center">
         <button
           disabled={page === 1}
           onClick={() => setPage((p) => p - 1)}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 transition-all"
         >
           Prev
         </button>
-        <span>
+        <span className="text-gray-600 font-medium">
           Page {page} of {totalPages}
         </span>
         <button
           disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 transition-all"
         >
           Next
         </button>

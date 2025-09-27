@@ -37,12 +37,12 @@ export default function MyProfile() {
 
           {/* Badges */}
           <div className="flex space-x-2 mt-2">
-            {profile.role === "normal" && (
+            {profile.badge  === "Bronze" && (
               <span className="px-3 py-1 bg-orange-400 text-white text-sm rounded-lg">
                 🥉 Bronze Badge
               </span>
             )}
-            {profile.role === "member" && (
+            {profile.badge  === "Gold" && (
               <span className="px-3 py-1 bg-yellow-500 text-white text-sm rounded-lg">
                 🥇 Gold Badge
               </span>

@@ -12,7 +12,13 @@ import AddPost from "../Pages/UserDashBoard/AddPost";
 import MyPosts from "../Pages/UserDashBoard/MyPosts";
 import PostDetails from "../Pages/PostDetails/PostDetails";
 import MembershipPage from "../Pages/MemberShips/MembershipPage";
-import ManageUsers from "../AdminDashboard/ManageUsers";
+
+import AdminDashboard from "../Pages/UserDashBoard/Admindashboard/AdminDashboard";
+import ManageUsers from "../Pages/UserDashBoard/ManageUsers";
+import AdminProfile from "../Pages/UserDashBoard/Admindashboard/AdminProfile";
+import UserDashboard from "../Pages/UserDashBoard/UserDashboard";
+import Reports from "../Pages/UserDashBoard/Admindashboard/Reports";
+import Announcement from "../Pages/UserDashBoard/Admindashboard/Announcement";
 
 export const router = createBrowserRouter([
   // Public routes
@@ -36,18 +42,25 @@ export const router = createBrowserRouter([
     ],
   },
 
-  {
-    path:"dashboard",
-    element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes> ,
-    children:[
-          { index: true, Component: MyProfile }, 
-          { path: "my-profile", Component: MyProfile },
-          { path: "add-post", Component: AddPost },
-          { path: "my-post", Component: MyPosts },
-          { path: "membership", Component: MembershipPage },
-          { path: "admin", Component: ManageUsers },
-    ]
-  },
+{
+  path: "/dashboard",
+  element: <PrivateRoutes><UserDashboard /></PrivateRoutes>,
+  children: [
+    { index: true, element: <MyProfile /> },
+    { path: "my-profile", element: <MyProfile /> },
+    { path: "add-post", element: <AddPost /> },
+    { path: "my-post", element: <MyPosts /> },
+    { path: "membership", element: <MembershipPage /> },
+
+    // Admin-only routes
+    
+    { path: "manage-users", element: <ManageUsers /> },
+    { path: "reported-comments", element: <Reports></Reports> },
+    { path: "announcement", element: <Announcement /> },
+  ]
+}
+
+
   //   {
   //   path: "dashboard",
   //   Component: (

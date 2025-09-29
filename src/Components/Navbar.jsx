@@ -1,13 +1,33 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import Logo from "./Logo";
 import { AuthContext } from "../Contexts/AuthContext/AuthContext";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [annCount, setAnnCount] = useState(0);
+
+  // Fetch announcement count from backend
+  const fetchAnnouncementCount = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/announcements");
+      setAnnCount(res.data.length);
+    } catch (err) {
+      console.error("Failed to fetch announcements:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnnouncementCount();
+
+    // Optional: poll every 30 seconds for new announcements
+    const interval = setInterval(fetchAnnouncementCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -55,14 +75,18 @@ const Navbar = () => {
             >
               Membership
             </NavLink>
+
+            {/* Notification Icon */}
             <NavLink
               to="/notifications"
               className="relative text-white hover:text-yellow-300 transition-colors duration-300"
             >
               <FaBell size={20} />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
-                3
-              </span>
+              {annCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+                  {annCount}
+                </span>
+              )}
             </NavLink>
           </div>
 
@@ -98,10 +122,16 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex gap-2">
-                <NavLink className="px-4 py-1 rounded-md bg-yellow-400 text-white font-semibold hover:bg-yellow-500 transition-colors" to="/login">
+                <NavLink
+                  className="px-4 py-1 rounded-md bg-yellow-400 text-white font-semibold hover:bg-yellow-500 transition-colors"
+                  to="/login"
+                >
                   Login
                 </NavLink>
-                <NavLink className="px-4 py-1 rounded-md bg-green-400 text-white font-semibold hover:bg-green-500 transition-colors" to="/register">
+                <NavLink
+                  className="px-4 py-1 rounded-md bg-green-400 text-white font-semibold hover:bg-green-500 transition-colors"
+                  to="/register"
+                >
                   Join Us
                 </NavLink>
               </div>

@@ -1,17 +1,33 @@
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-
+import axios from "axios";
 const Banner = () => {
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
-    const res = await fetch(
-      `http://localhost:5000/posts/search?keyword=${keyword}`
+
+const handleSearch = async () => {
+  if (!keyword.trim()) return;
+
+  setLoading(true);
+  try {
+    
+    const { data } = await axios.get(
+      `http://localhost:5000/posts/search/keyword?keyword=${keyword}`,
+     
     );
-    const data = await res.json();
+
+    console.log("Search result:", data);
     setResults(data);
-  };
+  } catch (error) {
+    console.error("Search error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  
 
   return (
     <section className="bg-[#2c3e50] text-white py-32 flex flex-col items-center justify-center text-center">
@@ -28,8 +44,9 @@ const Banner = () => {
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          placeholder="Enter a keyword..."
-          className="flex-grow px-4 py-3 rounded-l-md text-gray-800 focus:outline-none"
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          placeholder="Search posts by tag (e.g. React, JavaScript)..."
+          className="flex-grow px-4 py-3 rounded-l-md text-white focus:outline-none"
         />
         <button
           onClick={handleSearch}
@@ -41,7 +58,9 @@ const Banner = () => {
 
       {/* ✅ Search Results */}
       <div className="mt-8 w-full max-w-3xl text-left">
-        {results.length > 0 ? (
+        {loading ? (
+          <p className="text-gray-300 italic">Searching...</p>
+        ) : results.length > 0 ? (
           results.map((post) => (
             <div
               key={post._id}
@@ -49,7 +68,7 @@ const Banner = () => {
             >
               <h2 className="font-bold text-xl">{post.title}</h2>
               <p className="text-sm text-gray-500">
-                Tags: {post.tags.join(", ")}
+                Tag: {post.tag}
               </p>
             </div>
           ))

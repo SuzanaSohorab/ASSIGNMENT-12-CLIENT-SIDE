@@ -37,9 +37,9 @@ export const router = createBrowserRouter([
 
   {
     path:"dashboard",
-    Component:Dashboard,
+    element: <PrivateRoutes><Dashboard></Dashboard></PrivateRoutes> ,
     children:[
-          { index: true, Component: MyProfile }, // default page
+          { index: true, Component: MyProfile }, 
           { path: "my-profile", Component: MyProfile },
           { path: "add-post", Component: AddPost },
           { path: "my-post", Component: MyPosts },

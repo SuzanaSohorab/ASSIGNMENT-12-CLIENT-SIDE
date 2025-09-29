@@ -20,7 +20,7 @@ const Registration = () => {
             // console.log(result.user);
             await updateProfile(result.user, {
           displayName: data.name || data.email,
-          photoURL: data.photo,})
+          photoURL: data.photo,role:'user'})
 
              Swal.fire({
         icon: "success",

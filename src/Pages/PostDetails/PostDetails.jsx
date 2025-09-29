@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FacebookShareButton, FacebookIcon } from "react-share";
 import { AuthContext } from "../../Contexts/AuthContext/AuthContext";
+import Swal from "sweetalert2";
 
 export default function PostDetails() {
   const { _id } = useParams();
@@ -89,20 +90,46 @@ export default function PostDetails() {
     fetchPost();
   };
 
+  const handleReportComment = async (commentId) => {
+    if (!user) return alert("Please log in to report");
+    const { value: reason } = await Swal.fire({
+      title: "Report Comment",
+      input: "text",
+      inputLabel: "Reason for reporting",
+      inputPlaceholder: "Enter reason...",
+      showCancelButton: true,
+    });
+
+    if (!reason) return;
+
+    try {
+      await axios.post("http://localhost:5000/reports", {
+        commentId,
+        postId: post._id,
+        reporterEmail: user.email,
+        reason,
+      });
+      Swal.fire("Reported!", "This comment has been reported to admin.", "success");
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Could not report the comment.", "error");
+    }
+  };
+
   if (loading)
     return <p className="text-center mt-20 text-gray-500">Loading...</p>;
   if (!post) return <p className="text-center mt-20 text-red-500">Post not found</p>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-6 max-w-4xl mx-auto space-y-8">
       {/* Post Card */}
-      <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
+      <div className="bg-white shadow-xl rounded-xl border border-gray-200 p-6">
         {/* Author Info */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-4 mb-4">
           <img
             src={post.authorImage || "/default.png"}
             alt="author"
-            className="w-12 h-12 rounded-full border-2 border-blue-400"
+            className="w-14 h-14 rounded-full border-2 border-blue-400"
           />
           <div>
             <p className="font-semibold text-gray-800">{post.authorEmail}</p>
@@ -113,51 +140,51 @@ export default function PostDetails() {
         </div>
 
         {/* Post Content */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">{post.title}</h1>
-        <p className="text-gray-700 mb-4">{post.description}</p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
+        <p className="text-gray-700 text-lg mb-4">{post.description}</p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
-            {post.tag}
-          </span>
+          {post.tag && (
+            <span className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full font-medium">
+              {post.tag}
+            </span>
+          )}
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 items-center mt-3">
+        <div className="flex flex-wrap gap-3 items-center mt-4">
           <button
             onClick={handleUpvote}
-            className="px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white rounded shadow hover:from-green-500 hover:to-green-600 transition-all"
+            className="px-5 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-all flex items-center gap-2"
           >
             👍 Upvote ({post.upVote})
           </button>
           <button
             onClick={handleDownvote}
-            className="px-4 py-2 bg-gradient-to-r from-red-400 to-red-500 text-white rounded shadow hover:from-red-500 hover:to-red-600 transition-all"
+            className="px-5 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition-all flex items-center gap-2"
           >
             👎 Downvote ({post.downVote})
           </button>
           <FacebookShareButton url={shareUrl}>
-            <FacebookIcon size={36} round />
+            <FacebookIcon size={40} round />
           </FacebookShareButton>
         </div>
       </div>
 
       {/* Comment Section */}
-      <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
-        <h2 className="text-xl font-bold mb-4">
-          Comments ({post.commentCount || 0})
-        </h2>
+      <div className="bg-white shadow-xl rounded-xl border border-gray-200 p-6">
+        <h2 className="text-2xl font-bold mb-6">Comments ({post.commentCount || 0})</h2>
 
         {post.comments.map((c) => (
           <div
             key={c._id}
-            className="border-b last:border-b-0 py-3 flex gap-3 items-start"
+            className="border-b last:border-b-0 py-4 flex gap-4 items-start"
           >
             <img
               src={c.authorImage || "/default.png"}
               alt="commenter"
-              className="w-10 h-10 rounded-full border-2 border-gray-300"
+              className="w-12 h-12 rounded-full border-2 border-gray-300"
             />
             <div className="flex-1">
               {editingCommentId === c._id ? (
@@ -166,28 +193,28 @@ export default function PostDetails() {
                     type="text"
                     value={editingText}
                     onChange={(e) => setEditingText(e.target.value)}
-                    className="flex-1 border p-2 rounded"
+                    className="flex-1 border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                   <button
                     onClick={() => handleEditSave(c._id)}
-                    className="px-3 py-1 bg-blue-500 text-white rounded"
+                    className="px-4 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingCommentId(null)}
-                    className="px-3 py-1 bg-gray-400 text-white rounded"
+                    className="px-4 py-1 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-all"
                   >
                     Cancel
                   </button>
                 </div>
               ) : (
                 <>
-                  <p>
+                  <p className="text-gray-800">
                     <span className="font-semibold">{c.authorEmail}:</span>{" "}
                     {c.commentText}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 mt-1">
                     {new Date(c.createdAt).toLocaleString()}
                   </p>
                 </>
@@ -195,38 +222,46 @@ export default function PostDetails() {
             </div>
 
             {/* Comment Actions */}
-            {user &&
-              (user.email === c.authorEmail || user.email === post.authorEmail) && (
-                <div className="flex flex-col gap-1 text-right">
-                  {user.email === c.authorEmail && editingCommentId !== c._id && (
-                    <button className="text-blue-500 text-sm" onClick={() => handleEditStart(c._id, c.commentText)}>
-                      Edit
-                    </button>
-                  )}
+            {user && (
+              <div className="flex flex-col gap-1 text-right">
+                {user.email === c.authorEmail && editingCommentId !== c._id && (
                   <button
-                    className="text-red-500 text-sm"
-                    onClick={() => handleDeleteComment(c._id)}
+                    className="text-blue-500 text-sm hover:underline"
+                    onClick={() => handleEditStart(c._id, c.commentText)}
                   >
-                    Delete
+                    Edit
                   </button>
-                </div>
-              )}
+                )}
+                <button
+                  className="text-red-500 text-sm hover:underline"
+                  onClick={() => handleDeleteComment(c._id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="text-orange-500 text-sm hover:underline"
+                  onClick={() => handleReportComment(c._id)}
+                >
+                  Report
+                </button>
+              </div>
+            )}
           </div>
         ))}
 
         {/* Add Comment */}
         {user ? (
-          <div className="mt-4 flex gap-2">
+          <div className="mt-6 flex gap-3">
             <input
               type="text"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a comment..."
-              className="flex-1 border p-3 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 border p-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <button
               onClick={handleComment}
-              className="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 transition-all"
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-all"
             >
               Comment
             </button>

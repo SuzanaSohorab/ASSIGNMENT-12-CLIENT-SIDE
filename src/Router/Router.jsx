@@ -12,6 +12,7 @@ import AddPost from "../Pages/UserDashBoard/AddPost";
 import MyPosts from "../Pages/UserDashBoard/MyPosts";
 import PostDetails from "../Pages/PostDetails/PostDetails";
 import MembershipPage from "../Pages/MemberShips/MembershipPage";
+import ManageUsers from "../AdminDashboard/ManageUsers";
 
 export const router = createBrowserRouter([
   // Public routes
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
           { path: "add-post", Component: AddPost },
           { path: "my-post", Component: MyPosts },
           { path: "membership", Component: MembershipPage },
+          { path: "admin", Component: ManageUsers },
     ]
   },
   //   {

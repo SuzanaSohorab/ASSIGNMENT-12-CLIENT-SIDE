@@ -59,6 +59,15 @@ export default function Dashboard() {
                 >
                   🏅 Membership
                 </Link>
+                <li>
+  <Link
+    to="admin"
+    className="block p-2 rounded hover:bg-gray-200"
+  >
+    Manage Users
+  </Link>
+</li>
+
               </li>
             </ul>
           </nav>

@@ -11,11 +11,11 @@ export default function MyProfile() {
   useEffect(() => {
     if (user?.email) {
       // Get user info
-      axios.get(`http://localhost:5000/users/${user.email}`)
+      axios.get(`https://assignment-12-server-side-gilt.vercel.app/users/${user.email}`)
         .then((res) => setProfile(res.data));
 
       // Get recent 3 posts
-      axios.get(`http://localhost:5000/posts/recent/${user.email}`)
+      axios.get(`https://assignment-12-server-side-gilt.vercel.app/posts/recent/${user.email}`)
         .then((res) => setRecentPosts(res.data));
     }
   }, [user]);

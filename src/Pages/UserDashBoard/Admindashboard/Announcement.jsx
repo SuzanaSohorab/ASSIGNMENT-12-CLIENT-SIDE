@@ -12,7 +12,7 @@ export default function Announcement() {
   // Fetch all announcements
   const fetchAnnouncements = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/announcements");
+      const res = await axios.get("https://assignment-12-server-side-gilt.vercel.app/announcements");
       // Filter to show only announcements by logged-in admin
       const userAnnouncements = res.data.filter(
         (ann) => ann.authorEmail === user?.email
@@ -36,7 +36,7 @@ export default function Announcement() {
     }
 
     try {
-      await axios.post("http://localhost:5000/announcements", {
+      await axios.post("https://assignment-12-server-side-gilt.vercel.app/announcements", {
         title,
         description,
         authorName: user?.displayName || user?.email,
@@ -57,7 +57,7 @@ export default function Announcement() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this announcement?")) return;
     try {
-      await axios.delete(`http://localhost:5000/announcements/${id}`);
+      await axios.delete(`https://assignment-12-server-side-gilt.vercel.app/announcements/${id}`);
       fetchAnnouncements();
     } catch (err) {
       console.error(err);

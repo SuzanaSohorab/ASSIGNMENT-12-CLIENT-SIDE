@@ -14,7 +14,7 @@ export default function UserDashboard() {
     const fetchUser = async () => {
       if (!authUser?.email) return;
       try {
-        const res = await fetch(`http://localhost:5000/users/${authUser.email}`);
+        const res = await fetch(`https://assignment-12-server-side-gilt.vercel.app/users/${authUser.email}`);
         const data = await res.json();
         setUser(data);
       } catch (err) {

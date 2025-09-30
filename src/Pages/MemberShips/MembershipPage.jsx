@@ -18,7 +18,7 @@ export default function MembershipPage() {
       if (!confirmed) return;
 
       // Update user membership status in backend
-      await axios.put(`http://localhost:5000/users/membership/${user.email}`, {
+      await axios.put(`https://assignment-12-server-side-gilt.vercel.app/users/membership/${user.email}`, {
         membership: "Gold",
       });
 

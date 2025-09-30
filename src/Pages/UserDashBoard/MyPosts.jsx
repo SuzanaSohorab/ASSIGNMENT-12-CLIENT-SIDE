@@ -9,7 +9,7 @@ export default function MyPosts() {
   // Fetch user's posts
   const fetchPosts = () => {
     if (!user?.email) return;
-    fetch(`http://localhost:5000/posts/user/${user.email}`)
+    fetch(`https://assignment-12-server-side-gilt.vercel.app/posts/user/${user.email}`)
       .then((res) => res.json())
       .then((data) => setPosts(data));
   };
@@ -28,7 +28,7 @@ export default function MyPosts() {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:5000/posts/${id}`, {
+        fetch(`https://assignment-12-server-side-gilt.vercel.app/posts/${id}`, {
           method: "DELETE",
         })
           .then((res) => res.json())

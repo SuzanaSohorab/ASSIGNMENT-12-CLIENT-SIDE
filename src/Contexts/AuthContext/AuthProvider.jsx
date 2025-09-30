@@ -28,7 +28,7 @@ const AuthProvider = ({children}) => {
         if (currentUser?.email) {
   const userData = { email: currentUser.email };
 
-  axios.post('http://localhost:5000/jwt', userData, {
+  axios.post('https://assignment-12-server-side-gilt.vercel.app/jwt', userData, {
     withCredentials: true
   })
   .then(res => {
@@ -44,7 +44,7 @@ const AuthProvider = ({children}) => {
         if (currentUser?.email) {
   const userData = { email: currentUser.email };
 
-  axios.post('http://localhost:5000/jwt', userData, {
+  axios.post('https://assignment-12-server-side-gilt.vercel.app/jwt', userData, {
     withCredentials: true
   })
   .then(res => {
@@ -77,7 +77,7 @@ const AuthProvider = ({children}) => {
       setLoading(false);
       if(currentUser?.email){
         const userData ={email: currentUser.email};
-        axios.post('http://localhost:5000/jwt', userData ,{
+        axios.post('https://assignment-12-server-side-gilt.vercel.app/jwt', userData ,{
             withCredentials:true
         })
         .then( res =>{

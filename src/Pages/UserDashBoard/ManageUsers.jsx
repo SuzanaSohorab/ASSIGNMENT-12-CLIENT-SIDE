@@ -8,7 +8,7 @@ export default function ManageUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://localhost:5000/users");
+        const res = await fetch("https://assignment-12-server-side-gilt.vercel.app/users");
         const data = await res.json();
         setUsers(data);
       } catch (err) {
@@ -23,7 +23,7 @@ export default function ManageUsers() {
   // Toggle role (Admin <-> User)
   const toggleRole = async (id, currentRole) => {
     try {
-      const res = await fetch(`http://localhost:5000/users/toggle-role/${id}`, {
+      const res = await fetch(`https://assignment-12-server-side-gilt.vercel.app/users/toggle-role/${id}`, {
         method: "PUT",
       });
       const data = await res.json();

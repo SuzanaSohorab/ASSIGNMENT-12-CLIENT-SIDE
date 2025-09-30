@@ -8,7 +8,7 @@ export default function Reports() {
   const fetchReports = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/reports");
+      const res = await axios.get("https://assignment-12-server-side-gilt.vercel.app/reports");
       setReports(res.data);
       setLoading(false);
     } catch (err) {
@@ -24,7 +24,7 @@ export default function Reports() {
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm("Are you sure you want to delete this comment?")) return;
     try {
-      await axios.delete(`http://localhost:5000/comments/${commentId}`);
+      await axios.delete(`https://assignment-12-server-side-gilt.vercel.app/comments/${commentId}`);
       alert("Comment deleted successfully");
       fetchReports();
     } catch (err) {
@@ -35,7 +35,7 @@ export default function Reports() {
 
   const handleIgnoreReport = async (reportId) => {
     try {
-      await axios.put(`http://localhost:5000/reports/${reportId}`);
+      await axios.put(`https://assignment-12-server-side-gilt.vercel.app/reports/${reportId}`);
       alert("Report marked as reviewed");
       fetchReports();
     } catch (err) {
@@ -46,7 +46,7 @@ export default function Reports() {
 
   const handleWarnUser = async (email) => {
     try {
-      await axios.put(`http://localhost:5000/users/warn/${email}`);
+      await axios.put(`https://assignment-12-server-side-gilt.vercel.app/users/warn/${email}`);
       alert("User warned successfully");
     } catch (err) {
       console.error(err);

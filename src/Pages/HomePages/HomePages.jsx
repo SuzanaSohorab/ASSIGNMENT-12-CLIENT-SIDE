@@ -15,8 +15,8 @@ export default function HomePage() {
       try {
         const url =
           sort === "popular"
-            ? `http://localhost:5000/posts/popular?page=${page}&limit=5`
-            : `http://localhost:5000/posts?page=${page}&limit=5`;
+            ? `https://assignment-12-server-side-gilt.vercel.app/posts/popular?page=${page}&limit=5`
+            : `https://assignment-12-server-side-gilt.vercel.app/posts?page=${page}&limit=5`;
 
         const { data } = await axios.get(url);
         setPosts(data.posts || []);

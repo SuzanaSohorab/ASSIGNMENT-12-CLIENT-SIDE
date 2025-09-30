@@ -15,7 +15,7 @@ const Banner = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/posts/search/keyword?keyword=${searchTerm}`
+        `https://assignment-12-server-side-gilt.vercel.app/posts/search/keyword?keyword=${searchTerm}`
       );
       setResults(data);
     } catch (error) {

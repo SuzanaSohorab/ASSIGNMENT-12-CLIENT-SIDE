@@ -14,7 +14,7 @@ export default function CommentsPage() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/comments/${postId}`);
+        const res = await axios.get(`https://assignment-12-server-side-gilt.vercel.app/comments/${postId}`);
         setComments(res.data);
       } catch (err) {
         console.error("Failed to fetch comments", err);
@@ -34,7 +34,7 @@ export default function CommentsPage() {
   // Report comment
   const handleReport = async (comment) => {
     try {
-      await axios.post("http://localhost:5000/reports", {
+      await axios.post("https://assignment-12-server-side-gilt.vercel.app/reports", {
         commentId: comment._id,
         postId,
         commentText: comment.commentText,       // fixed field

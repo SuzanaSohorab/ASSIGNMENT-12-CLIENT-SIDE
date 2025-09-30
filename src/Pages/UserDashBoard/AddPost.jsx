@@ -23,7 +23,7 @@ export default function AddPost() {
   // 👉 Fetch user post count
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:5000/posts/count/${user.email}`)
+      fetch(`https://assignment-12-server-side-gilt.vercel.app/posts/count/${user.email}`)
         .then((res) => res.json())
         .then((data) => setPostCount(data.count));
     }
@@ -42,7 +42,7 @@ export default function AddPost() {
       createdAt: new Date(),
     };
 
-    const res = await fetch("http://localhost:5000/posts", {
+    const res = await fetch("https://assignment-12-server-side-gilt.vercel.app/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

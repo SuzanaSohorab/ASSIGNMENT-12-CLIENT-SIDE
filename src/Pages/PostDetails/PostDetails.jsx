@@ -19,7 +19,7 @@ export default function PostDetails() {
 
   const fetchPost = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:5000/posts/${_id}`);
+      const { data } = await axios.get(`https://assignment-12-server-side-gilt.vercel.app/posts/${_id}`);
       setPost(data);
     } catch (err) {
       console.error(err);
@@ -36,7 +36,7 @@ export default function PostDetails() {
   const handleComment = async () => {
     if (!user) return alert("Please log in to comment");
     try {
-      await axios.post(`http://localhost:5000/posts/${_id}/comments`, {
+      await axios.post(`https://assignment-12-server-side-gilt.vercel.app/posts/${_id}/comments`, {
         authorEmail: user.email,
         authorImage: user.photoURL || "/default.png",
         commentText,
@@ -52,7 +52,7 @@ export default function PostDetails() {
   const handleDeleteComment = async (commentId) => {
     if (!user) return alert("Please log in");
     try {
-      await axios.delete(`http://localhost:5000/comments/${commentId}`, {
+      await axios.delete(`https://assignment-12-server-side-gilt.vercel.app/comments/${commentId}`, {
         data: { userEmail: user.email },
       });
       fetchPost();
@@ -70,7 +70,7 @@ export default function PostDetails() {
   const handleEditSave = async (commentId) => {
     if (!user) return alert("Please log in");
     try {
-      await axios.put(`http://localhost:5000/comments/${commentId}`, {
+      await axios.put(`https://assignment-12-server-side-gilt.vercel.app/comments/${commentId}`, {
         commentText: editingText,
         userEmail: user.email,
       });
@@ -85,13 +85,13 @@ export default function PostDetails() {
   // --- Vote ---
   const handleUpvote = async () => {
     if (!user) return alert("Please log in to vote");
-    await axios.post(`http://localhost:5000/posts/${_id}/upvote`);
+    await axios.post(`https://assignment-12-server-side-gilt.vercel.app/posts/${_id}/upvote`);
     fetchPost();
   };
 
   const handleDownvote = async () => {
     if (!user) return alert("Please log in to vote");
-    await axios.post(`http://localhost:5000/posts/${_id}/downvote`);
+    await axios.post(`https://assignment-12-server-side-gilt.vercel.app/posts/${_id}/downvote`);
     fetchPost();
   };
 
@@ -109,7 +109,7 @@ export default function PostDetails() {
     if (!reason) return;
 
     try {
-      await axios.post("http://localhost:5000/reports", {
+      await axios.post("https://assignment-12-server-side-gilt.vercel.app/reports", {
         commentId,
         postId: post._id,
         reporterEmail: user.email,

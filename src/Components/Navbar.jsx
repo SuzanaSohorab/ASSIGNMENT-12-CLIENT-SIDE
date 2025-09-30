@@ -15,7 +15,7 @@ const Navbar = () => {
   // Fetch announcement count from backend
   const fetchAnnouncementCount = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/announcements");
+      const res = await axios.get("https://assignment-12-server-side-gilt.vercel.app/announcements");
       setAnnCount(res.data.length);
     } catch (err) {
       console.error("Failed to fetch announcements:", err);

@@ -1,16 +1,15 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Navbar from "../../Components/Navbar";
-import { FaUser, FaPlus, FaClipboardList } from "react-icons/fa";
+import { FaUser, FaPlus, FaClipboardList, FaUsers, FaFlag, FaBullhorn } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Contexts/AuthContext/AuthContext";
- // context providing logged-in user
+import { AuthContext } from "../../Contexts/AuthContext/AuthContext"; 
 
 export default function UserDashboard() {
   const location = useLocation();
-  const { user: authUser } = useContext(AuthContext); // logged-in user from context
-  const [user, setUser] = useState(null); // state for user fetched from backend
+  const { user: authUser } = useContext(AuthContext);
+  const [user, setUser] = useState(null);
 
-  // Fetch user info from backend to get correct role
+  // Fetch user info from backend
   useEffect(() => {
     const fetchUser = async () => {
       if (!authUser?.email) return;
@@ -25,26 +24,29 @@ export default function UserDashboard() {
     fetchUser();
   }, [authUser]);
 
-  // Helper to check active link
+  // Active link checker
   const isActive = (path) => location.pathname.includes(path);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-gray-50">
       <Navbar />
 
-      <div className="flex flex-1 bg-gray-100 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-lg border-r flex-shrink-0">
-          <div className="p-6 text-2xl font-bold border-b text-yellow-600">
+        <aside className="w-64 bg-white shadow-xl border-r flex-shrink-0">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 text-2xl font-bold">
             {user?.role === "admin" ? "Admin Dashboard" : "User Dashboard"}
           </div>
+
           <nav className="p-6">
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               <li>
                 <Link
                   to="my-profile"
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-yellow-100 ${
-                    isActive("my-profile") ? "bg-yellow-200 font-semibold" : ""
+                  className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                    isActive("my-profile")
+                      ? "bg-blue-100 text-blue-700 font-semibold"
+                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`}
                 >
                   <FaUser /> My Profile
@@ -53,8 +55,10 @@ export default function UserDashboard() {
               <li>
                 <Link
                   to="add-post"
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-yellow-100 ${
-                    isActive("add-post") ? "bg-yellow-200 font-semibold" : ""
+                  className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                    isActive("add-post")
+                      ? "bg-blue-100 text-blue-700 font-semibold"
+                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`}
                 >
                   <FaPlus /> Add Post
@@ -63,8 +67,10 @@ export default function UserDashboard() {
               <li>
                 <Link
                   to="my-post"
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-yellow-100 ${
-                    isActive("my-post") ? "bg-yellow-200 font-semibold" : ""
+                  className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                    isActive("my-post")
+                      ? "bg-blue-100 text-blue-700 font-semibold"
+                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`}
                 >
                   <FaClipboardList /> My Posts
@@ -73,8 +79,10 @@ export default function UserDashboard() {
               <li>
                 <Link
                   to="membership"
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-yellow-100 ${
-                    isActive("membership") ? "bg-yellow-200 font-semibold" : ""
+                  className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                    isActive("membership")
+                      ? "bg-blue-100 text-blue-700 font-semibold"
+                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`}
                 >
                   🏅 Membership
@@ -84,37 +92,40 @@ export default function UserDashboard() {
               {/* Admin-only links */}
               {user?.role === "admin" && (
                 <>
-                
                   <li>
                     <Link
                       to="manage-users"
-                      className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-yellow-100 ${
-                        isActive("manage-users") ? "bg-yellow-200 font-semibold" : ""
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                        isActive("manage-users")
+                          ? "bg-blue-100 text-blue-700 font-semibold"
+                          : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                       }`}
                     >
-                      🛠 Manage Users
+                      <FaUsers /> Manage Users
                     </Link>
                   </li>
-                
                   <li>
                     <Link
                       to="reported-comments"
-                      className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-yellow-100 ${
-                        isActive("reported-comments") ? "bg-yellow-200 font-semibold" : ""
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                        isActive("reported-comments")
+                          ? "bg-blue-100 text-blue-700 font-semibold"
+                          : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                       }`}
                     >
-                       Reported Comments
+                      <FaFlag /> Reported Comments
                     </Link>
                   </li>
-                
                   <li>
                     <Link
                       to="announcement"
-                      className={`flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-yellow-100 ${
-                        isActive("announcemnet") ? "bg-yellow-200 font-semibold" : ""
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                        isActive("announcement")
+                          ? "bg-blue-100 text-blue-700 font-semibold"
+                          : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                       }`}
                     >
-                      Announcemnet
+                      <FaBullhorn /> Announcement
                     </Link>
                   </li>
                 </>
@@ -123,10 +134,10 @@ export default function UserDashboard() {
           </nav>
         </aside>
 
-        {/* Main content */}
+        {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto">
-          <div className="bg-white rounded-lg shadow p-6 min-h-full">
-            <Outlet /> {/* Render active route here */}
+          <div className="bg-white rounded-lg shadow-md p-6 min-h-full border">
+            <Outlet /> {/* Render active route */}
           </div>
         </main>
       </div>

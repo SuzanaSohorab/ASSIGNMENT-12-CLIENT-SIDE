@@ -9,6 +9,7 @@ import {
     signInWithPopup
 } from 'firebase/auth';
 import { auth } from '../../Firebase/firebase.init';
+import axios from 'axios';
 
 
 const googleProvider =new GoogleAuthProvider();
@@ -21,12 +22,37 @@ const AuthProvider = ({children}) => {
         return createUserWithEmailAndPassword(auth, email, password);
     };
 
-    const signIn = (email, password) => {
+    const signIn = (email, password,currentUser) => {
         setLoading(true);
+        
+        if (currentUser?.email) {
+  const userData = { email: currentUser.email };
+
+  axios.post('http://localhost:5000/jwt', userData, {
+    withCredentials: true
+  })
+  .then(res => {
+    console.log('JWT token set in cookie:', res.data);
+  })
+  .catch(error => console.error('JWT error', error));
+}
+
         return signInWithEmailAndPassword(auth, email, password);
     };
-    const signWithGoogle =() =>{
+    const signWithGoogle =(currentUser) =>{
         setLoading(true);
+        if (currentUser?.email) {
+  const userData = { email: currentUser.email };
+
+  axios.post('http://localhost:5000/jwt', userData, {
+    withCredentials: true
+  })
+  .then(res => {
+    console.log('JWT token set in cookie:', res.data);
+  })
+  .catch(error => console.error('JWT error', error));
+}
+
         return signInWithPopup(auth,googleProvider)
 
     }
@@ -49,6 +75,17 @@ const AuthProvider = ({children}) => {
         setUser(null);
       }
       setLoading(false);
+      if(currentUser?.email){
+        const userData ={email: currentUser.email};
+        axios.post('http://localhost:5000/jwt', userData ,{
+            withCredentials:true
+        })
+        .then( res =>{
+            console.log('token after jwt', res.data);
+        })
+        .catch(error => console.log(error))
+        
+      }
     });
         return () => {
             unSubscribe();

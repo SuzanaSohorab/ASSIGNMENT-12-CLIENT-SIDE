@@ -13,7 +13,11 @@ export default function Announcement() {
   const fetchAnnouncements = async () => {
     try {
       const res = await axios.get("http://localhost:5000/announcements");
-      setAnnouncements(res.data);
+      // Filter to show only announcements by logged-in admin
+      const userAnnouncements = res.data.filter(
+        (ann) => ann.authorEmail === user?.email
+      );
+      setAnnouncements(userAnnouncements);
     } catch (err) {
       console.error(err);
     }
@@ -21,7 +25,7 @@ export default function Announcement() {
 
   useEffect(() => {
     fetchAnnouncements();
-  }, []);
+  }, [user]);
 
   // Create announcement
   const handleSubmit = async (e) => {
@@ -61,8 +65,8 @@ export default function Announcement() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Make Announcement</h1>
+    <div className="max-w-3xl mx-auto p-6 space-y-8">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">My Announcements</h1>
 
       {/* Author Info */}
       {user && (
@@ -101,43 +105,51 @@ export default function Announcement() {
       </form>
 
       {/* Announcement List */}
-      {announcements.length > 0 && (
-        <div className="space-y-4">
+      {announcements.length > 0 ? (
+        <div className="space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Announcements ({announcements.length})
+            My Announcements ({announcements.length})
           </h2>
           <ul className="space-y-4">
             {announcements.map((ann) => (
               <li
                 key={ann._id}
-                className="bg-white p-5 rounded-2xl shadow-md border border-gray-200 flex flex-col md:flex-row md:justify-between md:items-start hover:shadow-lg transition-shadow"
+                className="bg-white p-6 rounded-3xl shadow-md border border-gray-200 flex flex-col md:flex-row md:justify-between md:items-start gap-4 hover:shadow-lg transition-shadow"
               >
                 <div className="flex gap-4">
                   {ann.authorImage && (
                     <img
                       src={ann.authorImage}
                       alt={ann.authorName}
-                      className="w-12 h-12 rounded-full border border-gray-300 object-cover"
+                      className="w-14 h-14 rounded-full border border-gray-300 object-cover flex-shrink-0"
                     />
                   )}
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800">{ann.title}</h3>
-                    <p className="text-gray-700 mt-1">{ann.description}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      By {ann.authorName || "Unknown"} ({ann.authorEmail}) •{" "}
+                    <h3 className="text-lg font-bold text-gray-900">{ann.title}</h3>
+                    <p className="text-gray-700 mt-2">{ann.description}</p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      By <span className="font-medium">{ann.authorName || "Unknown"}</span> •{" "}
                       {new Date(ann.createdAt).toLocaleString()}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => handleDelete(ann._id)}
-                  className="mt-4 md:mt-0 text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition-colors"
+                  className="mt-4 md:mt-0 text-red-500 hover:text-red-700 flex items-center gap-2 font-semibold transition-colors"
                 >
                   <FaTrash /> Delete
                 </button>
               </li>
             ))}
           </ul>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-3xl py-16 shadow-md">
+          <FaTrash size={50} className="text-gray-400 mb-4" />
+          <p className="text-gray-600 text-xl font-semibold">You haven’t posted any announcements yet</p>
+          <p className="text-gray-400 text-sm mt-2 text-center max-w-xs">
+            All your announcements will appear here. Create one using the form above.
+          </p>
         </div>
       )}
     </div>

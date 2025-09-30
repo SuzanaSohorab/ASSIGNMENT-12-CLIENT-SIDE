@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FacebookShareButton, FacebookIcon } from "react-share";
 import { AuthContext } from "../../Contexts/AuthContext/AuthContext";
@@ -13,6 +13,7 @@ export default function PostDetails() {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingText, setEditingText] = useState("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const shareUrl = `${window.location.origin}/post/${_id}`;
 
@@ -31,6 +32,7 @@ export default function PostDetails() {
     fetchPost();
   }, [_id]);
 
+  // --- Comment Add ---
   const handleComment = async () => {
     if (!user) return alert("Please log in to comment");
     try {
@@ -46,6 +48,7 @@ export default function PostDetails() {
     }
   };
 
+  // --- Comment Delete ---
   const handleDeleteComment = async (commentId) => {
     if (!user) return alert("Please log in");
     try {
@@ -58,6 +61,7 @@ export default function PostDetails() {
     }
   };
 
+  // --- Comment Edit ---
   const handleEditStart = (commentId, text) => {
     setEditingCommentId(commentId);
     setEditingText(text);
@@ -78,6 +82,7 @@ export default function PostDetails() {
     }
   };
 
+  // --- Vote ---
   const handleUpvote = async () => {
     if (!user) return alert("Please log in to vote");
     await axios.post(`http://localhost:5000/posts/${_id}/upvote`);
@@ -90,6 +95,7 @@ export default function PostDetails() {
     fetchPost();
   };
 
+  // --- Report Comment ---
   const handleReportComment = async (commentId) => {
     if (!user) return alert("Please log in to report");
     const { value: reason } = await Swal.fire({
@@ -118,7 +124,8 @@ export default function PostDetails() {
 
   if (loading)
     return <p className="text-center mt-20 text-gray-500">Loading...</p>;
-  if (!post) return <p className="text-center mt-20 text-red-500">Post not found</p>;
+  if (!post)
+    return <p className="text-center mt-20 text-red-500">Post not found</p>;
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
@@ -166,15 +173,27 @@ export default function PostDetails() {
           >
             👎 Downvote ({post.downVote})
           </button>
+
+          {/* Facebook Share */}
           <FacebookShareButton url={shareUrl}>
             <FacebookIcon size={40} round />
           </FacebookShareButton>
+
+          {/* 🔥 View Comments Button */}
+          <button
+            onClick={() => navigate(`/dashboard/comments/${post._id}`)}
+            className="px-5 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-all"
+          >
+            💬 View Comments
+          </button>
         </div>
       </div>
 
       {/* Comment Section */}
       <div className="bg-white shadow-xl rounded-xl border border-gray-200 p-6">
-        <h2 className="text-2xl font-bold mb-6">Comments ({post.commentCount || 0})</h2>
+        <h2 className="text-2xl font-bold mb-6">
+          Comments ({post.commentCount || 0})
+        </h2>
 
         {post.comments.map((c) => (
           <div
@@ -267,9 +286,7 @@ export default function PostDetails() {
             </button>
           </div>
         ) : (
-          <p className="mt-4 text-gray-500 text-sm">
-            Login to comment or vote
-          </p>
+          <p className="mt-4 text-gray-500 text-sm">Login to comment or vote</p>
         )}
       </div>
     </div>

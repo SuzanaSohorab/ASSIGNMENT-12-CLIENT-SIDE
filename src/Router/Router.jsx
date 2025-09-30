@@ -19,6 +19,9 @@ import AdminProfile from "../Pages/UserDashBoard/Admindashboard/AdminProfile";
 import UserDashboard from "../Pages/UserDashBoard/UserDashboard";
 import Reports from "../Pages/UserDashBoard/Admindashboard/Reports";
 import Announcement from "../Pages/UserDashBoard/Admindashboard/Announcement";
+import ShowAnnouncement from "../ShowAnnouncement/ShowAnnouncement";
+import AllComments from "../Pages/AllComments/CommentsPage";
+import CommentsPage from "../Pages/AllComments/CommentsPage";
 
 export const router = createBrowserRouter([
   // Public routes
@@ -28,6 +31,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Home} ,
        { path: "post/:_id", Component: PostDetails },
+       { path: "show-announcement", Component: ShowAnnouncement }
 
         
       
@@ -51,6 +55,7 @@ export const router = createBrowserRouter([
     { path: "add-post", element: <AddPost /> },
     { path: "my-post", element: <MyPosts /> },
     { path: "membership", element: <MembershipPage /> },
+    { path: "comments/:postId", element: < CommentsPage/> },
 
     // Admin-only routes
     

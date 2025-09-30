@@ -10,6 +10,7 @@ const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [annCount, setAnnCount] = useState(0);
+  let closeTimeout;
 
   // Fetch announcement count from backend
   const fetchAnnouncementCount = async () => {
@@ -78,7 +79,7 @@ const Navbar = () => {
 
             {/* Notification Icon */}
             <NavLink
-              to="/notifications"
+              to="/show-announcement"
               className="relative text-white hover:text-yellow-300 transition-colors duration-300"
             >
               <FaBell size={20} />
@@ -93,27 +94,45 @@ const Navbar = () => {
           {/* User Section */}
           <div className="flex items-center gap-4">
             {user ? (
-              <div className="relative">
+              <div
+                className="relative"
+  onMouseLeave={() => {
+    // Delay closing by 500ms (0.5s)
+    closeTimeout = setTimeout(() => setIsDropdownOpen(false), 500);
+  }}
+  onMouseEnter={() => {
+    // Cancel closing if mouse comes back
+    clearTimeout(closeTimeout);
+  }}
+              >
+                {/* Profile Image */}
                 <img
                   src={user.photoURL || "/default-profile.png"}
                   alt="Profile"
-                  className="w-10 h-10 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-105 transition-transform duration-300"
+                  className="w-10 h-10 rounded-full border border-gray-300 shadow cursor-pointer hover:ring-2 hover:ring-yellow-400 transition-all duration-300"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 />
+
+                {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg py-2 z-50">
-                    <p className="px-4 py-2 text-gray-700 font-semibold">
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-3 z-50">
+                    {/* User Info */}
+                    <p className="px-4 pb-2 text-gray-800 font-semibold border-b border-gray-100">
                       {user.displayName || user.email}
                     </p>
+
+                    {/* Links */}
                     <Link
                       to="/dashboard"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                      className="block px-4 py-2 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 transition-colors rounded-md mx-2"
                     >
                       Dashboard
                     </Link>
+
+                    {/* Logout */}
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 transition-colors"
+                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors rounded-md mx-2"
                     >
                       Logout
                     </button>
@@ -129,7 +148,7 @@ const Navbar = () => {
                   Login
                 </NavLink>
                 <NavLink
-                  className="px-4 py-1 rounded-md bg-green-400 text-white font-semibold hover:bg-green-500 transition-colors"
+                  className="px-4 py-1 rounded-md bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors"
                   to="/register"
                 >
                   Join Us

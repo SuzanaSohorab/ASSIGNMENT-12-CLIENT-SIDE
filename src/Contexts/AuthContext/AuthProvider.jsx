@@ -75,7 +75,7 @@ useEffect(() => {
         setUser({
           uid: currentUser.uid,
           email: currentUser.email,
-          displayName: currentUser.displayName,
+          displayName: mongoUser.name ,
           photoURL: mongoUser?.photo || currentUser.photoURL || "/default-profile.png", 
           _id: mongoUser?._id,                    
           membership: mongoUser?.membership || "Free",

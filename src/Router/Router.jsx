@@ -22,6 +22,7 @@ import Announcement from "../Pages/UserDashBoard/Admindashboard/Announcement";
 import ShowAnnouncement from "../ShowAnnouncement/ShowAnnouncement";
 import AllComments from "../Pages/AllComments/CommentsPage";
 import CommentsPage from "../Pages/AllComments/CommentsPage";
+import Payment from "../Pages/UserDashBoard/Payment";
 
 export const router = createBrowserRouter([
   // Public routes
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
     { path: "my-post", element: <MyPosts /> },
     { path: "membership", element: <MembershipPage /> },
     { path: "comments/:postId", element: < CommentsPage/> },
+    { path: "membership/payment/:paymentId", element: < Payment/> },
 
     // Admin-only routes
     

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Contexts/AuthContext/AuthContext";
 
 export default function MembershipPage() {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser,  } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const membershipFee = 500; // Example: 500 taka
@@ -18,15 +18,16 @@ export default function MembershipPage() {
       if (!confirmed) return;
 
       // Update user membership status in backend
-      await axios.put(`https://assignment-12-server-side-gilt.vercel.app/users/membership/${user.email}`, {
-        membership: "Gold",
-      });
+      // await axios.put(`https://assignment-12-server-side-gilt.vercel.app/users/membership/${user.email}`, {
+      //   membership: "Gold",
+      // });
 
-      // Update user in context (so UI updates immediately)
-      setUser({ ...user, membership: "Gold" });
+      // // Update user in context (so UI updates immediately)
+      // setUser({ ...user, membership: "Gold" });
+      
 
       alert("Payment successful! You are now a Gold member.");
-      navigate("/"); // redirect to homepage or dashboard
+      navigate(`/dashboard/membership/payment/${user._id}`); 
     } catch (err) {
       console.error(err);
       alert("Payment failed. Try again.");

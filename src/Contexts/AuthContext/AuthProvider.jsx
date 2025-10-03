@@ -61,7 +61,7 @@ const AuthProvider = ({children}) => {
         return firebaseSignOut(auth);
     };
     
-   useEffect(() => {
+useEffect(() => {
   const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
     if (currentUser) {
       try {
@@ -69,15 +69,15 @@ const AuthProvider = ({children}) => {
         const res = await axios.get(
           `https://assignment-12-server-side-gilt.vercel.app/users/${currentUser.email}`
         );
-        const mongoUser = res.data; // should include _id, membership, role, etc.
+        const mongoUser = res.data; // includes photoURL stored in MongoDB
 
         // merge firebase + mongo
         setUser({
           uid: currentUser.uid,
           email: currentUser.email,
           displayName: currentUser.displayName,
-          photoURL: currentUser.photoURL,
-          _id: mongoUser?._id,                    // ✅ now you have _id
+          photoURL: mongoUser?.photo || currentUser.photoURL || "/default-profile.png", 
+          _id: mongoUser?._id,                    
           membership: mongoUser?.membership || "Free",
           role: mongoUser?.role || "user",
         });
@@ -89,7 +89,7 @@ const AuthProvider = ({children}) => {
           uid: currentUser.uid,
           email: currentUser.email,
           displayName: currentUser.displayName,
-          photoURL: currentUser.photoURL,
+          photoURL: currentUser.photoURL || "/default-profile.png",
         });
       }
     } else {
@@ -98,7 +98,7 @@ const AuthProvider = ({children}) => {
 
     setLoading(false);
 
-    // JWT handling (keep your existing code)
+    // JWT handling (existing code)
     if (currentUser?.email) {
       const userData = { email: currentUser.email };
       axios
@@ -116,6 +116,7 @@ const AuthProvider = ({children}) => {
     unSubscribe();
   };
 }, []);
+
 
 
 

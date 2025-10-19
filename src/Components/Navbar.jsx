@@ -12,10 +12,12 @@ const Navbar = () => {
   const [annCount, setAnnCount] = useState(0);
   let closeTimeout;
 
-  // Fetch announcement count from backend
+  // 🔹 Fetch announcement count
   const fetchAnnouncementCount = async () => {
     try {
-      const res = await axios.get("https://assignment-12-server-side-gilt.vercel.app/announcements");
+      const res = await axios.get(
+        "https://assignment-12-server-side-gilt.vercel.app/announcements"
+      );
       setAnnCount(res.data.length);
     } catch (err) {
       console.error("Failed to fetch announcements:", err);
@@ -25,7 +27,7 @@ const Navbar = () => {
   useEffect(() => {
     fetchAnnouncementCount();
 
-    // Optional: poll every 30 seconds for new announcements
+    // Optional: poll every 30 seconds
     const interval = setInterval(fetchAnnouncementCount, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -45,16 +47,19 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 shadow-md bg-gradient-to-r from-blue-200 to-blue-600">
+    <nav className="sticky top-0 z-50 shadow-md bg-[#B6AE9F]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          {/* Logo & Brand */}
-          <Link to="/" className="flex items-center gap-2 text-white font-bold text-xl">
+          {/* 🔹 Logo */}
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-white font-bold text-xl"
+          >
             <Logo />
             <span>MySite</span>
           </Link>
 
-          {/* Links */}
+          {/* 🔹 Navigation Links */}
           <div className="hidden md:flex items-center gap-6">
             <NavLink
               to="/"
@@ -77,7 +82,7 @@ const Navbar = () => {
               Membership
             </NavLink>
 
-            {/* Notification Icon */}
+            {/* 🔹 Notification Icon */}
             <NavLink
               to="/show-announcement"
               className="relative text-white hover:text-yellow-300 transition-colors duration-300"
@@ -91,19 +96,17 @@ const Navbar = () => {
             </NavLink>
           </div>
 
-          {/* User Section */}
+          {/* 🔹 User Section */}
           <div className="flex items-center gap-4">
             {user ? (
               <div
                 className="relative"
-  onMouseLeave={() => {
-    // Delay closing by 500ms (0.5s)
-    closeTimeout = setTimeout(() => setIsDropdownOpen(false), 500);
-  }}
-  onMouseEnter={() => {
-    // Cancel closing if mouse comes back
-    clearTimeout(closeTimeout);
-  }}
+                onMouseLeave={() => {
+                  closeTimeout = setTimeout(() => setIsDropdownOpen(false), 500);
+                }}
+                onMouseEnter={() => {
+                  clearTimeout(closeTimeout);
+                }}
               >
                 {/* Profile Image */}
                 <img
@@ -114,35 +117,55 @@ const Navbar = () => {
                 />
 
                 {/* Dropdown Menu */}
-                {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-lg py-3 z-50">
-                    {/* User Info */}
-                    <p className="px-4 pb-2 text-gray-800 font-semibold border-b border-gray-100">
-                      {user.displayName || user.email}
-                    </p>
+                {/* Dropdown Menu */}
+{isDropdownOpen && (
+  <div
+    className="absolute right-0 mt-3 w-64 bg-white/90 backdrop-blur-md border border-gray-100 
+               rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] py-3 z-50 
+               transition-all duration-300 animate-fadeIn overflow-hidden"
+  >
+    {/* User Info */}
+    <div className="px-4 pb-3 border-b border-gray-200">
+      <p className="text-gray-900 font-semibold text-sm">
+        {user.displayName || user.email}
+      </p>
+    
+    </div>
 
-                    {/* Links */}
-                    <Link
-                      to="/dashboard"
-                      className="block px-4 py-2 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 transition-colors rounded-md mx-2"
-                    >
-                      Dashboard
-                    </Link>
+    {/* Links */}
+    <div className="py-2">
+      <Link
+        to="/dashboard"
+        className="relative block px-4 py-2 text-gray-700 transition-all duration-200 mx-2 
+                    items-center gap-2 after:content-[''] after:absolute after:left-4 
+                   after:bottom-1 after:w-0 after:h-[2px] after:bg-indigo-600 
+                   hover:after:w-[90%] after:transition-all after:duration-300"
+      >
+        
+        Dashboard
+      </Link>
+    </div>
 
-                    {/* Logout */}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors rounded-md mx-2"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
+    {/* Divider */}
+    <div className="border-t border-gray-200 my-2"></div>
+
+    {/* Logout */}
+    <button
+      onClick={handleLogout}
+      className="relative w-full text-left px-4 py-2 text-red-600 transition-all duration-200 
+                 flex items-center gap-2 mx-2 after:content-[''] after:absolute after:left-4 
+                 after:bottom-1 after:w-0 after:h-[2px] after:bg-red-600 
+                 hover:after:w-[90%] after:transition-all after:duration-300"
+    >Logout
+    </button>
+  </div>
+)}
+
               </div>
             ) : (
               <div className="flex gap-2">
                 <NavLink
-                  className="px-4 py-1 rounded-md bg-yellow-400 text-white font-semibold hover:bg-yellow-500 transition-colors"
+                  className="px-4 py-1 rounded-md bg-[#456882] text-white font-semibold hover:bg-[#BADFDB] transition-colors hover:text-black"
                   to="/login"
                 >
                   Login

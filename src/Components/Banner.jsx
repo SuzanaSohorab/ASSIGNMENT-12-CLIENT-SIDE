@@ -83,7 +83,7 @@ const Banner = () => {
         />
         <button
           onClick={() => handleSearch()}
-          className="bg-indigo-600 px-6 flex items-center justify-center hover:bg-indigo-700"
+          className="bg-[#456882] px-6 flex items-center justify-center hover:bg-indigo-700"
         >
           <FaSearch className="text-white text-lg" />
         </button>

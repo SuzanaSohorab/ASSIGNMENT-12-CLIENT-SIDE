@@ -56,7 +56,7 @@ const Navbar = () => {
             className="flex items-center gap-2 text-white font-bold text-xl"
           >
             <Logo />
-            <span>MySite</span>
+            {/* <span>MySite</span> */}
           </Link>
 
           {/* 🔹 Navigation Links */}
@@ -163,7 +163,7 @@ const Navbar = () => {
 
               </div>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex gap-2 mr-28">
                 <NavLink
                   className="px-4 py-1 rounded-md bg-[#456882] text-white font-semibold hover:bg-[#BADFDB] transition-colors hover:text-black"
                   to="/login"

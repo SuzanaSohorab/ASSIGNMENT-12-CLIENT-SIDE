@@ -9,6 +9,11 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Smooth scroll to top whenever page or sort changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page, sort]);
+
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
@@ -24,17 +29,25 @@ export default function HomePage() {
       } catch (err) {
         console.error("Error fetching posts:", err);
       } finally {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 300); // slight delay for smooth transition
       }
     };
 
     fetchPosts();
   }, [page, sort]);
 
-  if (loading) return <p className="text-center mt-20 text-gray-500">Loading...</p>;
+  if (loading)
+    return (
+      <p className="text-center mt-20 text-gray-500 animate-pulse">
+        Loading...
+      </p>
+    );
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div
+      className="p-6 max-w-5xl mx-auto transition-all duration-500 ease-in-out"
+      style={{ scrollBehavior: "smooth" }}
+    >
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold text-blue-700">All Posts</h1>
@@ -47,9 +60,20 @@ export default function HomePage() {
       </div>
 
       {/* Posts */}
-      <div className="grid gap-6">
-        {posts.map((post) => (
-          <Link to={`/post/${post._id}`} key={post._id} className="block">
+      <div
+        className="grid gap-6 opacity-0 animate-fadeIn"
+        key={`${page}-${sort}`} // re-trigger animation on page/sort change
+      >
+        {posts.map((post, i) => (
+          <Link
+            to={`/post/${post._id}`}
+            key={post._id}
+            className="block transform transition-transform hover:scale-[1.02]"
+            style={{
+              animationDelay: `${i * 0.1}s`,
+              animation: "fadeInUp 0.6s ease forwards",
+            }}
+          >
             <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-5 border border-gray-100">
               {/* Author */}
               <div className="flex items-center gap-3 mb-3">
@@ -59,7 +83,9 @@ export default function HomePage() {
                   className="w-10 h-10 rounded-full border-2 border-blue-400"
                 />
                 <div>
-                  <p className="font-semibold text-gray-800">{post.authorEmail}</p>
+                  <p className="font-semibold text-gray-800">
+                    {post.authorEmail}
+                  </p>
                   <p className="text-gray-400 text-sm">
                     {new Date(post.createdAt).toLocaleString()}
                   </p>
@@ -67,7 +93,9 @@ export default function HomePage() {
               </div>
 
               {/* Title & Description */}
-              <h2 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                {post.title}
+              </h2>
               <p className="text-gray-600 line-clamp-3">{post.description}</p>
 
               {/* Tags & Stats */}
@@ -110,3 +138,6 @@ export default function HomePage() {
     </div>
   );
 }
+
+/* 🪄 Add this CSS (e.g., in index.css or tailwind.css global section)
+   for fadeIn + fadeInUp animations */
